@@ -23,6 +23,7 @@
 
 #if TARGET_OS_IOS || TARGET_OS_WATCH || TARGET_OS_TV
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <objc/runtime.h>
 #else
 #import <CoreServices/CoreServices.h>
 #endif
@@ -1371,3 +1372,47 @@ typedef enum {
 }
 
 @end
+
+
+
+
+#pragma mark - RDAdditions
+
+
+static const char kShouldReplaceHTTPHeaderFieldsOnRFC2616RedirectBehaviour;
+
+@implementation NSURLRequest (RDAdditions)
+
+- (void)setShouldReplaceHTTPHeaderFieldsOnRFC2616RedirectBehaviour:(BOOL)shouldReplaceHTTPHeaderFieldsOnRFC2616RedirectBehaviour{
+    objc_setAssociatedObject(self,
+                             &kShouldReplaceHTTPHeaderFieldsOnRFC2616RedirectBehaviour,
+                             @(shouldReplaceHTTPHeaderFieldsOnRFC2616RedirectBehaviour),
+                             OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+- (BOOL)shouldReplaceHTTPHeaderFieldsOnRFC2616RedirectBehaviour {
+    return [objc_getAssociatedObject(self, &kShouldReplaceHTTPHeaderFieldsOnRFC2616RedirectBehaviour) boolValue];
+}
+
+- (instancetype)RFC2616RedirectRequestFromRequest:(NSURLRequest *)newURLRequest{
+    
+    NSMutableURLRequest *new2616request = [self mutableCopy];
+    [new2616request setURL:newURLRequest.URL];
+    
+    if (self.shouldReplaceHTTPHeaderFieldsOnRFC2616RedirectBehaviour) {
+        // vs.savchenko@readdle.com: 'setAllHTTPHeaderFields:' is doing UNION from old and new sets of values
+        for (NSString *headerKey in [[new2616request allHTTPHeaderFields] allKeys]) {
+            [new2616request setValue:nil forHTTPHeaderField:headerKey];
+        }
+        for (NSString *headerKey in [[newURLRequest allHTTPHeaderFields] allKeys]) {
+            [new2616request setValue:([newURLRequest allHTTPHeaderFields])[headerKey] forHTTPHeaderField:headerKey];
+        }
+    }
+    return new2616request;
+}
+
+@end
+
+
+
+

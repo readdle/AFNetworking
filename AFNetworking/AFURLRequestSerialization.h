@@ -476,4 +476,15 @@ FOUNDATION_EXPORT NSString * const AFNetworkingOperationFailingURLRequestErrorKe
 FOUNDATION_EXPORT NSUInteger const kAFUploadStream3GSuggestedPacketSize;
 FOUNDATION_EXPORT NSTimeInterval const kAFUploadStream3GSuggestedDelay;
 
+
+
+@interface NSURLRequest (RDAdditions)
+
+@property (nonatomic,assign)BOOL shouldReplaceHTTPHeaderFieldsOnRFC2616RedirectBehaviour;
+
+- (instancetype)RFC2616RedirectRequestFromRequest:(NSURLRequest *)newURLRequest;
+
+@end
+
+
 NS_ASSUME_NONNULL_END
