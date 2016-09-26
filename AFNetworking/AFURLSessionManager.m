@@ -1256,19 +1256,27 @@ expectedTotalBytes:(int64_t)expectedTotalBytes
 @end
 
 
-#pragma mark - RDURLSessionManager
+#pragma mark - SharedSessionManager
 
-@implementation RDURLSessionManager
+static AFURLSessionManager *_sharedSessionManager = nil;
 
-+ (RDURLSessionManager *)defaultHTTPSessionManager{
-    static dispatch_once_t onceToken;
-    static RDURLSessionManager *manager = nil;
-    dispatch_once(&onceToken, ^{
+@implementation AFURLSessionManager (SharedSessionManager)
+
++ (void)createDefaultHTTPSessionManager{
+    if([self defaultHTTPSessionManager]==nil){
         NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-        manager = [[RDURLSessionManager alloc] initWithSessionConfiguration:configuration];
+        AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
         manager.responseSerializer = [AFHTTPResponseSerializer serializer];
-    });
-    return manager;
+        [self setDefaultHTTPSessionManager:manager];
+    }
+}
+
++ (AFURLSessionManager *)defaultHTTPSessionManager{
+    return _sharedSessionManager;
+}
+
++ (void)setDefaultHTTPSessionManager:(AFURLSessionManager *)manager{
+    _sharedSessionManager = manager;
 }
 
 @end

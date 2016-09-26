@@ -309,23 +309,4 @@ FOUNDATION_EXPORT NSString * const AFNetworkingOperationFailingURLResponseErrorK
 FOUNDATION_EXPORT NSString * const AFNetworkingOperationFailingURLResponseDataErrorKey;
 
 
-
-@interface NSError (RDAdditions)
-
-- (BOOL)isURLCancelledError;
-
-@end
-
-@interface NSURLResponse (RDAdditions)
-
-- (NSHTTPURLResponse *)httpResponse;
-
-+ (NSString *)responseStringFromObject:(id)responseObject;
-
-+ (NSData *)responseDataFromObject:(id)responseObject;
-
-+ (BOOL)saveResponseObject:(id)responseObject toFile:(NSString *)filePath error:(NSError **)error;
-
-@end
-
 NS_ASSUME_NONNULL_END

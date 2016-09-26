@@ -498,10 +498,15 @@ FOUNDATION_EXPORT NSString * const AFNetworkingTaskDidCompleteAssetPathKey;
 FOUNDATION_EXPORT NSString * const AFNetworkingTaskDidCompleteErrorKey;
 
 
-@interface RDURLSessionManager : AFURLSessionManager
+@interface AFURLSessionManager (SharedSessionManager)
 
-+ (RDURLSessionManager *)defaultHTTPSessionManager;
++ (void)createDefaultHTTPSessionManager;
+
++ (AFURLSessionManager *)defaultHTTPSessionManager;
+
++ (void)setDefaultHTTPSessionManager:(AFURLSessionManager *)manager;
 
 @end
+
 
 NS_ASSUME_NONNULL_END
